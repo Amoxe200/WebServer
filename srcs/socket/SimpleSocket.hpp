@@ -11,7 +11,7 @@ class SimpleSocket
 	private:
 		struct sockaddr_in	address;
 		int 				sock_fd;
-		int 				connection;
+		int 				binding;
 		int					listening;
 		int					backlog;
 
@@ -36,7 +36,7 @@ class SimpleSocket
 		//Setter fucntions
 		void				set_address(struct sockaddr_in address);
 		void				set_sock_fd(int sock_fd);
-		void				set_connection(int connection);
+		void				set_binding(int binding);
 };
 
 #endif

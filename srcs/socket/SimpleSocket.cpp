@@ -15,8 +15,8 @@ SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
 	test_connection(this->sock_fd);
 
 	// Bind
-	this->connection = connect_to_network();
-	test_connection(this->connection);
+	this->binding = connect_to_network();
+	test_connection(this->binding);
 
 	// Listen
 	this->listening = start_listening();
@@ -77,9 +77,9 @@ void	SimpleSocket::set_sock_fd(int sock_fd)
 	return ;
 }
 
-void	SimpleSocket::set_connection(int connection)
+void	SimpleSocket::set_binding(int binding)
 {
-	this->connection = connection;
+	this->binding = binding;
 	return ;
 }
 
