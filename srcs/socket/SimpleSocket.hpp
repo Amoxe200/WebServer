@@ -31,7 +31,7 @@ class SimpleSocket
 		// getter functions
 		struct sockaddr_in	get_address();
 		int 				get_sock_fd();
-		int 				get_connection();
+		int 				get_binding();
 
 		//Setter fucntions
 		void				set_address(struct sockaddr_in address);

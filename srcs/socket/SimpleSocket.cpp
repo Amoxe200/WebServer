@@ -59,9 +59,9 @@ int		SimpleSocket::get_sock_fd(void)
 	return (this->sock_fd);
 }
 
-int		SimpleSocket::get_connection(void)
+int		SimpleSocket::get_binding(void)
 {
-	return(this->connection);
+	return(this->binding);
 }
 
 // Setter fucntions

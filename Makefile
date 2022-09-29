@@ -1,8 +1,11 @@
 NAME = webserv
 
-SRCS = ./srcs/
+SRCS = ./srcs/server/Server.cpp \
+	   ./srcs/socket/SimpleSocket.cpp \
+		./srcs/main.cpp
 
-INCLUDES = ./includes/
+INCLUDES = ./srcs/server/Server.hpp \
+		   ./srcs/socket/SimpleSocket.hpp
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
 
