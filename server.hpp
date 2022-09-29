@@ -8,7 +8,7 @@ class Server{
 
     private:
     std::vector<Location> location;
-    
+        
 };
 
 
