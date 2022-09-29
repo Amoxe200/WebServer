@@ -1,0 +1,6 @@
+Index directive :
+    Defines files that will be used as index
+    The file name can contain variables
+    Files are checked in the specified order
+    The last element of the list can be a file with an absolute path EX :
+    index index.$geo.html index.0.html /index.html;

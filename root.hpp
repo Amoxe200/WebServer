@@ -4,6 +4,7 @@
 #include <iterator>
 #include <map>
 #include <vector>
+#include <fstream>
 #include "server.hpp"
 
 class Root {
@@ -11,22 +12,11 @@ class Root {
 private:
 std::vector<Server> servers;
 
-
-protected:
-std::string index;
-std::string i_val;
-std::string body_size;
-std::string size;
-std::string allowed_mtd;
-std::string type_mtd;
-std::string auto_index;
-std::string status;
-
-
 public:
     Root();
     ~Root();
-    std::map<std::string, std::string> elements;.
+    std::map<std::string, std::string> elements;
+    std::string ret_key(std::string line);
 };
 
 
