@@ -26,7 +26,7 @@ std::string status;
 public:
     Root();
     ~Root();
-    std::map<std::string, std::string> elements;
+    std::map<std::string, std::string> elements;.
 };
 
 
