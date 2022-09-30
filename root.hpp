@@ -21,6 +21,7 @@ public:
     std::string ret_key(std::string line);
     void splitter(std::string line);
     std::string space_remover(std::string word);
+    void map_printer();
 };
 
 

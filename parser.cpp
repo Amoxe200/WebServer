@@ -8,7 +8,6 @@ void    parse_config()
     std::ifstream Myfile("server.conf");
     while (std::getline(Myfile, configFile))
         default_server.ret_key(configFile);
-
     Myfile.close();
 }
 
