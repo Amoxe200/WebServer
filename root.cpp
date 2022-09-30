@@ -32,14 +32,14 @@ std::string	Root::space_remover(std::string word)
 		i++;
 	while ((word[i] != ' ' || word[i] != '\t') && i < lenght)
 	{
-		no_space[index] = word[i];
+		no_space.push_back(word[i]);
 		if ((word[i] == ' ' || word[i] == '\t') && i < lenght)
 			i++;
 		i++;
 		index++;
 	}
-	no_space[index] = '\0';
-	std::cout<<no_space<<std::endl;
+	no_space.push_back('\0');
+	// std::cout << "====["<< index<< no_space<< "]"<<std::endl;
 	return (no_space);
 }
 
@@ -66,5 +66,5 @@ void Root::splitter(std::string line)
 
 	key = std::string(toSplit).substr(startIndex, lastIndex);
 	key = space_remover(key);
-	// std::cout<< key << std::endl;
+	std::cout<< key << std::endl;
 }
