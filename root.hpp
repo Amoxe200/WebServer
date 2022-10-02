@@ -15,14 +15,13 @@ private:
 std::vector<Server> servers;
 
 public:
-    Root();
-    ~Root();
-    std::map<std::string, std::string> elements;
-    std::string ret_key(std::string line);
-    void splitter(std::string line);
-    std::string space_remover(std::string word);
-    void map_printer();
+	Root();
+	~Root();
+	std::map<std::string, std::vector<std::string> > elements;
+	std::string ret_key(std::string line);
+	void splitter(std::string line, char del);
+	std::string space_remover(std::string word);
+	void map_printer();
 };
-
 
 #endif
