@@ -22,7 +22,6 @@ std::string	Root::space_remover(std::string word)
 	int i = 0;
 	int index = 0;
 	int lenght = 0;
-	// char *new_word = const_cast<char *> (word.c_str());
 	std::string no_space;
 
 	while (word[lenght])
@@ -32,15 +31,25 @@ std::string	Root::space_remover(std::string word)
 		i++;
 	while ((word[i] != ' ' || word[i] != '\t') && i < lenght)
 	{
-		no_space[index] = word[i];
+		no_space.push_back(word[i]);
 		if ((word[i] == ' ' || word[i] == '\t') && i < lenght)
-			i++;
+			i++;	
 		i++;
 		index++;
 	}
-	no_space[index] = '\0';
-	std::cout<<no_space<<std::endl;
+	// no_space.push_back('\0');
 	return (no_space);
+}
+
+void Root::map_printer()
+{
+	std::map<std::string, std::string>::iterator it = elements.begin();
+
+	while (it != elements.end())
+	{
+		std::cout<<"Key = ["<<it->first<<"] Value = "<<it->second<<std::endl;
+		it++;
+	}
 }
 
 void Root::splitter(std::string line)
@@ -50,21 +59,31 @@ void Root::splitter(std::string line)
     int startIndex = 0;
     int i = 0;
 	int lent = 0;
-    int lastIndex = 0;
-	// int len_key = 0;
-	// int len_val = 0;
+    int start_val = 0;
+ 	int len_key = 0;
+	int len_val = 0;
 
-    char *toSplit = const_cast<char *> (line.c_str());
-    
-	while (toSplit[lent])
-		lent++;
-
-    while (toSplit[i] != ':' && i < lent)
-        i++;
-    lastIndex = i; 
-	// len_val = i;
-
-	key = std::string(toSplit).substr(startIndex, lastIndex);
-	key = space_remover(key);
-	// std::cout<< key << std::endl;
+   if (line.compare("server:") != 0)
+   {
+		while (line[lent])
+			lent++;
+		while (line[i] != ':' && i < lent)
+			i++;
+		len_key = i;
+		if(line[i] == ':')
+			i++;
+		start_val = i;
+		while (line[i])
+			i++;
+		len_val = i;
+		key = line.substr(startIndex, len_key);
+		key = space_remover(key);
+		value = line.substr(start_val, len_val);
+		elements.insert (std::pair<std::string, std::string> (key, value));
+   }
+   else
+   {
+	map_printer();
+	exit(1);
+   }
 }
