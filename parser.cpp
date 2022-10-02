@@ -13,6 +13,5 @@ void    parse_config()
 
 int main(){
     parse_config();
-    
     return (0);
 }

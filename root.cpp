@@ -12,7 +12,13 @@ Root::~Root()
 
 std::string Root::ret_key(std::string line)
 {
-	splitter(line);
+	if (line.compare("server:") != 0)
+		splitter(line, ':');
+	else
+	{
+		map_printer();
+		exit(1);
+	}
     
 	return (line);
 }
@@ -37,53 +43,49 @@ std::string	Root::space_remover(std::string word)
 		i++;
 		index++;
 	}
-	// no_space.push_back('\0');
 	return (no_space);
 }
 
 void Root::map_printer()
 {
-	std::map<std::string, std::string>::iterator it = elements.begin();
+	std::map<std::string, std::vector<std::string> >::iterator it = elements.begin();
 
 	while (it != elements.end())
 	{
-		std::cout<<"Key = ["<<it->first<<"] Value = "<<it->second<<std::endl;
+		std::cout<<"[Key = "<<it->first<<"]";
+		std::vector<std::string> inside_vec = it->second;
+		for (unsigned i = 0; i < inside_vec.size(); i++)
+			std::cout<<" [Value = "<<inside_vec[i]<<"]"<<std::endl;
 		it++;
 	}
 }
 
-void Root::splitter(std::string line)
+void Root::splitter(std::string line, char del)
 {
 	std::string key;
-	std::string value;
+	std::string str_val;
+	std::vector<std::string> value;
     int startIndex = 0;
     int i = 0;
 	int lent = 0;
-    int start_val = 0;
+	int start_val = 0;
  	int len_key = 0;
 	int len_val = 0;
 
-   if (line.compare("server:") != 0)
-   {
-		while (line[lent])
-			lent++;
-		while (line[i] != ':' && i < lent)
-			i++;
-		len_key = i;
-		if(line[i] == ':')
-			i++;
-		start_val = i;
-		while (line[i])
-			i++;
-		len_val = i;
-		key = line.substr(startIndex, len_key);
-		key = space_remover(key);
-		value = line.substr(start_val, len_val);
-		elements.insert (std::pair<std::string, std::string> (key, value));
-   }
-   else
-   {
-	map_printer();
-	exit(1);
-   }
+	while (line[lent])
+		lent++;
+	while (line[i] != del && i < lent)
+		i++;
+	len_key = i;
+	if(line[i] == del)
+		i++;
+	start_val = i;
+	while (line[i])
+		i++;
+	len_val = i;
+	key = line.substr(startIndex, len_key);
+	key = space_remover(key);
+	str_val = line.substr(start_val, len_val);
+	value.push_back(str_val);
+	elements.insert (std::pair< std::string, std::vector<std::string> > (key, value));
 }
