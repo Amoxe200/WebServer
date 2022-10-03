@@ -4,26 +4,33 @@
 
 SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
 		u_long interface, int backlog) : backlog(backlog)
-{
-   //Define address structure
-   this->address.sin_family = domain;
-   this->address.sin_port = htons(port);
-   this->address.sin_addr.s_addr = htonl(interface);
-	
-   // Establish socket
-	this->sock_fd = socket(domain, service, protocol);
-	test_connection(this->sock_fd);
+{	
 
-	// Bind
+	define_address(domain, port, interface);
+	// Creat socket
+	this->server_sock = socket(domain, service, protocol);
+	test_connection(this->server_sock);
+	
+	//mark a socket as non-blocking
+    	if (fcntl(this->server_sock, F_SETFL,  O_NONBLOCK) < 0)
+		test_connection(-1);
+
+
 	this->binding = connect_to_network();
 	test_connection(this->binding);
 
-	// Listen
+
 	this->listening = start_listening();
 	test_connection(this->listening);
 }
 
-// Test connection function
+void	SimpleSocket::define_address(int domain, int port, u_long interface)
+{
+	this->address.sin_family = domain;
+	this->address.sin_port = htons(port);
+	this->address.sin_addr.s_addr = htonl(interface);
+}
+
 void	SimpleSocket::test_connection(int item_to_test)
 {
 	// confirm that the socket or connection has been properly established
@@ -34,17 +41,15 @@ void	SimpleSocket::test_connection(int item_to_test)
 	}
 }
 
-// Bind function
 int		SimpleSocket::connect_to_network(void)
 {
-	return (bind(this->sock_fd, (struct sockaddr *)&this->address,
+	return (bind(this->server_sock, (struct sockaddr *)&this->address,
 				sizeof(this->address)));
 }
 
-// listening function
 int		SimpleSocket::start_listening(void)
 {
-	return(listen(this->sock_fd, this->backlog));
+	return(listen(this->server_sock, this->backlog));
 }
 
 // Getter functions
@@ -54,9 +59,9 @@ struct sockaddr_in SimpleSocket::get_address(void)
 	return (this->address);
 }
 
-int		SimpleSocket::get_sock_fd(void)
+int		SimpleSocket::get_server_sock(void)
 {
-	return (this->sock_fd);
+	return (this->server_sock);
 }
 
 int		SimpleSocket::get_binding(void)
@@ -71,9 +76,9 @@ void	SimpleSocket::set_address(struct sockaddr_in address)
 	return ;
 }
 
-void	SimpleSocket::set_sock_fd(int sock_fd)
+void	SimpleSocket::set_server_sock(int server_sock)
 {
-	this->sock_fd = sock_fd;
+	this->server_sock = server_sock;
 	return ;
 }
 
