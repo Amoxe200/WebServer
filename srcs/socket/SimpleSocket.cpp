@@ -26,7 +26,6 @@ SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
 // Test connection function
 void	SimpleSocket::test_connection(int item_to_test)
 {
-	// confirm that the socket or connection has been properly established
 	if (item_to_test < 0)
 	{
 		perror("Fialed to connect...");
