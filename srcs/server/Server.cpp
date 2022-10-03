@@ -30,22 +30,21 @@ void	Server::selecter(void)
 	// because select is destructive
 	this->ready_sockets = this->current_sockets;
 
-	if (select(4, &ready_sockets, NULL, NULL, NULL) < 0)
+	if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0)
 	{
-		std::cout << "here \n";
 		perror("select error");
 		exit(EXIT_FAILURE);
 	}
-	for(int i = 0; i < FD_SETSIZE; i++)
+	for(int i = 0; i < FD_SETSIZE - 1; i++)
 	{
 		if (FD_ISSET(i, &ready_sockets))
 		{
 			if (i == server_socket)
 			{
-				//this is a new connection}
+				//this is a new connection}9
 				this->client_socket = accept(this->server_socket,
 				(struct sockaddr *)&address, (socklen_t *)&addrlen);
-				std::cout << "accept -> " << this->client_socket << std::endl;
+		//		std::cout << "accept -> " << this->client_socket << std::endl;
 				FD_SET(this->client_socket, &this->current_sockets);
 			}
 			else
@@ -58,12 +57,12 @@ void	Server::handler(void)
 {	
 	int 		n;
 	uint8_t		recvline[4096+1];
-	std::string str[4096];
+	//std::string str[4096];
 
 	std::cout << "--------\n";
-	while (( n = recv(this->client_socket, str, 4096 - 1, 0)) > 0)
+	while (( n = read(this->client_socket, recvline, 4096 - 1)) > 0)
 	{
-		std::cout << str << std::endl;
+	//	std::cout << str << std::endl;
 		fprintf(stdout, "\n%s\n", recvline);
 		if (recvline[n-1] == '\n')
 			break ;
