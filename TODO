@@ -4,3 +4,10 @@ Index directive :
     Files are checked in the specified order
     The last element of the list can be a file with an absolute path EX :
     index index.$geo.html index.0.html /index.html;
+
+Fix this
+
+    - Complete the parsing of the server block 
+    - Compleye the parsing of the location block
+    - Handle new line and find a way to tokenize the directive and it's value
+
