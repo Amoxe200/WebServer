@@ -61,7 +61,7 @@ void Root::map_printer()
 
 }
 
-void Root::splitter(std::string line, char del)
+std::map<std::string, std::string> Root::splitter(std::string line, char del)
 {
 	std::string key;
 	std::string str_val;
