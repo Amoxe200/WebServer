@@ -39,7 +39,7 @@ std::string	Root::space_remover(std::string word)
 	{
 		no_space.push_back(word[i]);
 		if ((word[i] == ' ' || word[i] == '\t') && i < lenght)
-			i++;	
+			i++;
 		i++;
 		index++;
 	}
@@ -58,9 +58,10 @@ void Root::map_printer()
 			std::cout<<" [Value = "<<inside_vec[i]<<"]"<<std::endl;
 		it++;
 	}
+
 }
 
-void Root::splitter(std::string line, char del)
+std::map<std::string, std::string> Root::splitter(std::string line, char del)
 {
 	std::string key;
 	std::string str_val;

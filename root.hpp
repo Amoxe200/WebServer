@@ -9,7 +9,7 @@
 #include <cstring>
 #include "server.hpp"
 
-class Root {
+class Root { 
 
 private:
 std::vector<Server> servers;
@@ -19,7 +19,8 @@ public:
 	~Root();
 	std::map<std::string, std::vector<std::string> > elements;
 	std::string ret_key(std::string line);
-	void splitter(std::string line, char del);
+	std::map<std::string, std::string> splitter(std::string line, char del);
+	std::string space_remover(std::string word);
 	void map_printer();
 	std::string space_remover(std::string word);
 };
