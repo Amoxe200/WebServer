@@ -20,7 +20,7 @@ public:
 	std::map<std::string, std::vector<std::string> > elements;
 	std::string ret_key(std::string line);
 	std::map<std::string, std::string> splitter(std::string line, char del);
-	std::string space_remover(std::string word);
+	void fill_root(std::string line);
 	void map_printer();
 	std::string space_remover(std::string word);
 };
