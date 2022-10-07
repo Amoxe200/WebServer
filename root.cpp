@@ -13,15 +13,63 @@ Root::~Root()
 std::string Root::ret_key(std::string line)
 {
 	if (line.compare("server:") != 0)
-		fill_root(line);
+		splitter(line, ':');
 	else
 	{
-		// map_printer();
+		map_printer();
 		exit(1);
 	}
     
 	return (line);
 }
+
+/**********************************************************/
+/*******************    GETTERS    ************************/
+/**********************************************************/
+
+std::string Root::get_index()
+{
+	return index;
+}
+
+std::vector<std::pair<std::string, std::string> > Root::get_errorPage()
+{
+	return errorPage;
+}
+
+int Root::get_bodySize()
+{
+	return bodySize;
+}
+
+std::vector<std::string> Root::get_method()
+{
+	return method;
+}
+
+std::string Root::get_autoIndex()
+{
+	return autoIndex;
+}
+
+std::string Root::get_cgiPath()
+{
+	return cgiPath;
+}
+
+std::vector<std::string> Root::get_cgiExt()
+{
+	return cgiExt;
+}
+
+/**********************************************************/
+/*******************    SETTERS    ************************/
+/**********************************************************/
+
+
+
+
+
 
 std::string	Root::space_remover(std::string word)
 {
@@ -89,26 +137,25 @@ std::map<std::string, std::string> Root::splitter(std::string line, char del)
 	key = space_remover(key);
 	str_val = line.substr(start_val, len_val);
 	lines.insert(std::pair<std::string, std::string> (key, str_val));
-
-	// value.push_back(str_val);
-	// elements.insert (std::pair< std::string, std::vector<std::string> > (key, value));
+	value.push_back(str_val);
+	elements.insert (std::pair< std::string, std::vector<std::string> > (key, value));
 	return(lines);
 }
 
-void Root::fill_root(std::string line)
-{
-	std::vector<std::string> value;
-	std::map<std::string, std::string> key_map;
+// void Root::fill_root(std::string line)
+// {
+// 	std::vector<std::string> value;
+// 	std::map<std::string, std::string> key_map;
 
-	key_map = splitter(line, ':');
+// 	key_map = splitter(line, ':');
 
-	std::map<std::string, std::string> :: iterator it  = key_map.begin();
+// 	std::map<std::string, std::string> :: iterator it  = key_map.begin();
 
-	while (it != key_map.end())
-	{
-		// std::cout<<"[key = " << it->first << " ] "<< " [value = "<<it->second << " ]"<< std::endl;
-				
-		std::cout<<"Value = "<< it->second << std::endl;
-		it++;
-	}
-}
+// 	while (it != key_map.end())
+// 	{
+// 		// std::cout<<"[key = " << it->first << " ] "<< " [value = "<<it->second << " ]"<< std::endl;
+
+// 		std::cout<<"Value = "<< it->second << std::endl;
+// 		it++;
+// 	}
+// }
