@@ -9,11 +9,13 @@ class Server
 {
 	private:
 		SimpleSocket *	socket;
-		int		client_socket;
-		int		server_socket;
-		fd_set		ready_sockets;
-		fd_set		current_sockets;
-	//	std::string			buffer[30000];
+		int				client_socket;
+		int				server_socket;
+		//int				max_socket;
+		fd_set			read_sockets;
+		fd_set			current_sockets;
+		fd_set			write_sockets;
+
 	public:
 		Server(int domain, int service, int protocol, int port,
 				u_long interface, int backlog);
@@ -25,7 +27,6 @@ class Server
 		void	handler(void);
 		void	responder(void);
 		void	launch(void);
-		
 };
 
 

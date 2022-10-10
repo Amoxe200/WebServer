@@ -19,7 +19,7 @@ void	Server::creatSocket(int domain, int service, int protocol,
 void	Server::initialize_current_sockets(void)
 {
 	FD_ZERO(&this->current_sockets);
-	FD_SET(this->socket->get_server_sock(), &this->current_sockets);
+	FD_SET(this->server_socket, &this->current_sockets);
 }
 
 void	Server::selecter(void)
@@ -28,27 +28,30 @@ void	Server::selecter(void)
 	int			addrlen = sizeof(this->socket->get_address());
 
 	// because select is destructive
-	this->ready_sockets = this->current_sockets;
+	this->read_sockets = this->current_sockets;
+	this->write_sockets = this->current_sockets;
 
-	if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0)
+	if (select(FD_SETSIZE, &this->read_sockets, &this->write_sockets, NULL, NULL) < 0)
 	{
 		perror("select error");
 		exit(EXIT_FAILURE);
 	}
-	for(int i = 0; i < FD_SETSIZE - 1; i++)
+	for(int i = 0; i < FD_SETSIZE; i++)
 	{
-		if (FD_ISSET(i, &ready_sockets))
+		if (FD_ISSET(i, &read_sockets))
 		{
 			if (i == server_socket)
 			{
-				//this is a new connection}9
 				this->client_socket = accept(this->server_socket,
 				(struct sockaddr *)&address, (socklen_t *)&addrlen);
-		//		std::cout << "accept -> " << this->client_socket << std::endl;
 				FD_SET(this->client_socket, &this->current_sockets);
 			}
 			else
+			{
+				std::cout << "HERE222222\n" << std::endl;
+				this->client_socket = i;
 				handler();
+			}
 		}
 	}
 }
@@ -57,12 +60,10 @@ void	Server::handler(void)
 {	
 	int 		n;
 	uint8_t		recvline[4096+1];
-	//std::string str[4096];
 
 	std::cout << "--------\n";
-	while (( n = read(this->client_socket, recvline, 4096 - 1)) > 0)
+	while (( n = recv(this->client_socket, recvline, 4096 - 1, 0)) > 0)
 	{
-	//	std::cout << str << std::endl;
 		fprintf(stdout, "\n%s\n", recvline);
 		if (recvline[n-1] == '\n')
 			break ;
@@ -72,9 +73,10 @@ void	Server::handler(void)
 
 void	Server::responder(void)
 {
-	char *hello = (char *)"Hello from server";
-	write(this->client_socket, hello, strlen(hello));
+	std::string rep = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 37\r\n\r\n<html><body><h2>ok</h2></body></html>";
+	send(this->client_socket, &rep, rep.length(), 0);
 	close(this->client_socket);
+	FD_CLR(this->client_socket, &this->current_sockets);
 }
 
 void	Server::launch(void)
