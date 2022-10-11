@@ -5,6 +5,7 @@
 SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
 		u_long interface, int backlog) : backlog(backlog)
 {	
+	int		optval = 1;
 
 	define_address(domain, port, interface);
 	// Creat socket
@@ -12,10 +13,10 @@ SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
 	test_connection(this->server_sock);
 	
 	//mark a socket as non-blocking
-    	if (fcntl(this->server_sock, F_SETFL,  O_NONBLOCK) < 0)
+	setsockopt(this->server_sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
+
+    if (fcntl(this->server_sock, F_SETFL,  O_NONBLOCK) < 0)
 		test_connection(-1);
-
-
 	this->binding = connect_to_network();
 	test_connection(this->binding);
 
