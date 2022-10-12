@@ -3,6 +3,8 @@
 Server::Server(int domain, int service, int protocol, int port,
 		u_long interface, int backlog)
 {
+	this->client_socket = -1;
+	this->max_fd = 0;
 	creatSocket(domain, service, protocol, port, interface, backlog);
 	initialize_current_sockets();
 	launch();
@@ -14,6 +16,8 @@ void	Server::creatSocket(int domain, int service, int protocol,
 	this->socket = new SimpleSocket(domain, service, protocol, port,
 			interface, backlog);
 	this->server_socket = this->socket->get_server_sock();
+	if (this->server_socket > this->max_fd)
+		this->max_fd = this->server_socket;
 }
 
 void	Server::initialize_current_sockets(void)
@@ -30,37 +34,46 @@ void	Server::selecter(void)
 	// because select is destructive
 	this->ready_sockets = this->current_sockets;
 
-	if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0)
+	if (select(this->max_fd + 1, &ready_sockets, NULL, NULL, NULL) < 0)
 	{
 		perror("select error");
 		exit(EXIT_FAILURE);
 	}
-	for(int i = 0; i < FD_SETSIZE - 1; i++)
+	std::cout << "SETSIZE : " << this->max_fd << std::endl;
+	for(int i = 0; i < this->max_fd + 1; i++)
 	{
+		std::cout << "checking for socket connection" << std::endl;
 		if (FD_ISSET(i, &ready_sockets))
 		{
 			if (i == server_socket)
 			{
-				//this is a new connection}9
+				//this is a new connection}
+				std::cout << "Trying to accept new client" << std::endl;
 				this->client_socket = accept(this->server_socket,
 				(struct sockaddr *)&address, (socklen_t *)&addrlen);
-		//		std::cout << "accept -> " << this->client_socket << std::endl;
-				FD_SET(this->client_socket, &this->current_sockets);
+				std::cout << "new client " << this->client_socket << std::endl;
+				if (this->client_socket != -1)
+					FD_SET(this->client_socket, &this->current_sockets);
+				if (this->client_socket > this->max_fd)
+					this->max_fd = this->client_socket;
 			}
 			else
-				handler();
+			{
+				std::cout <<"print REquest" << std::endl;
+				handler(i);
+			}
 		}
 	}
 }
 
-void	Server::handler(void)
+void	Server::handler(int i)
 {	
 	int 		n;
 	uint8_t		recvline[4096+1];
 	//std::string str[4096];
 
 	std::cout << "--------\n";
-	while (( n = read(this->client_socket, recvline, 4096 - 1)) > 0)
+	while (( n = read(i, recvline, 4096 - 1)) > 0)
 	{
 	//	std::cout << str << std::endl;
 		fprintf(stdout, "\n%s\n", recvline);
@@ -72,9 +85,12 @@ void	Server::handler(void)
 
 void	Server::responder(void)
 {
-	char *hello = (char *)"Hello from server";
+	std::cout << "client socket: " << this->client_socket << std::endl;
+	char *hello = (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Length: 88\nContent-Type: text/html\nConnection: Closed";
 	write(this->client_socket, hello, strlen(hello));
 	close(this->client_socket);
+	FD_CLR(this->client_socket, &this->current_sockets);
+	this->client_socket = -1;
 }
 
 void	Server::launch(void)

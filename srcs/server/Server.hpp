@@ -13,16 +13,15 @@ class Server
 		int		server_socket;
 		fd_set		ready_sockets;
 		fd_set		current_sockets;
-	//	std::string			buffer[30000];
+		int			max_fd;
 	public:
 		Server(int domain, int service, int protocol, int port,
 				u_long interface, int backlog);
 		
-		void	creatSocket(int domain, int service, int protocol, int port,
-					u_long interface, int backlog);
+		void	creatSocket(int domain, int service, int protocol, int port, u_long interface, int backlog);
 		void	initialize_current_sockets(void);
 		void	selecter(void);
-		void	handler(void);
+		void	handler(int i);
 		void	responder(void);
 		void	launch(void);
 		
