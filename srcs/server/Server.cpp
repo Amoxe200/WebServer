@@ -22,21 +22,42 @@ void	Server::initialize_current_sockets(void)
 	FD_SET(this->server_socket, &this->current_sockets);
 }
 
+bool	Server::check_header(void)
+{
+	for(size_t i = 0; i < this->request.size() - 1; i++)
+    {
+        if (this->request[i] == '\n' && this->request[i + 1] == '\n')
+        {
+            this->request[i + 1] = '$';
+			return (true);
+		}
+    }
+	return (false);
+}
+
 void	Server::readSocket(int fd)
 {
-	uint8_t *buf;
-	buf = (uint8_t *)malloc(sizeof(uint8_t) * 1025);
-	int ret;
-	while (true)
+
+	std::string		buf;
+	char			*sendRequest;
+	char			*body = NULL;
+	// read the socket
+	recv(fd, &buf, 1024, 0);
+	if (this->request.empty())
+		this->request = buf;
+	else
+		this->request += buf;
+	bzero(&buf, 1024);
+	if (check_header())
 	{
-		ret = recv(fd, buf, 1024, 0);
-		if (ret <= 0)
-			break;
-		buf[1024] = '\0';
-		std::cout << buf << std::endl;
-		bzero(buf, 1024);
+		sendRequest = strtok(&this->request[0], "$");
+		body = strtok(NULL, "$");
+		ParsingRequest *parsingRequest = new ParsingRequest(sendRequest);
 	}
-	free(buf);
+	if (body != NULL)
+	{
+		std::cout << "BODY : " << strlen(body) << std::endl;
+	}
 }
 
 void	Server::selecter(void)
@@ -73,7 +94,6 @@ void	Server::accepter(void)
 void	Server::responder(int index)
 {
 	std::string rep = "HTTP/1.1  200 OK\r\nContent-Type: text/html\r\nContent-Length: 37\r\n\r\n<html><body><h2>ok</h2></body></html>";
-	// write(vClient_socket[i], rep.c_str(), rep.size());
 	send(vClient_socket[index], rep.c_str(), rep.length(), 0);
 	close(vClient_socket[index]);
 	FD_CLR(vClient_socket[index], &this->current_sockets);

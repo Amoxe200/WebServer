@@ -5,6 +5,7 @@
 #include <sys/select.h>
 #include "../socket/SimpleSocket.hpp"
 #include <vector>
+#include "../parsing/HttpRequest/ParsingRequest.hpp"
 
 class Server
 {
@@ -15,7 +16,7 @@ class Server
 		fd_set			read_sockets;
 		fd_set			current_sockets;
 		fd_set			write_sockets;
-
+		std::string		request;
 	public:
 		Server(int domain, int service, int protocol, int port,
 				u_long interface, int backlog);
@@ -25,6 +26,7 @@ class Server
 		void	selecter(void);
 		void	accepter(void);
 		// void	handler(void);
+		bool	check_header(void);
 		void	readSocket(int fd);
 		void	responder(int index);
 		void	launch(void);

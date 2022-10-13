@@ -5,9 +5,8 @@ ParsingRequest::ParsingRequest(char *request)
     char *request_ln;;
     char *header_fiel;
 
-    end_header_fields(&request);
     request_ln = strtok(request, "\n");
-    header_fiel = strtok(NULL, "$");
+    header_fiel = strtok(NULL, "\n");
     request_line(request_ln);
     header_fields(header_fiel);
 }

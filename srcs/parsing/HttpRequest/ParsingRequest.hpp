@@ -30,6 +30,7 @@ class ParsingRequest
         void    request_line(char *request_line);
         void    header_fields(char *header_fields);
         void    set_errors(void);
+        std::map<int, std::string>  get_errors(int field);
 };
 
 #endif
