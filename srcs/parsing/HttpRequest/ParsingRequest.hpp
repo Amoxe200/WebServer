@@ -5,12 +5,14 @@
 #include <map>
 #include <iostream>
 
-// enum HTTPMethods
-// {
-//     GET = 1,
-//     POST = 2,
-//     DELETE = 3
-// };
+enum HTTPfields
+{
+   //Authorization,
+    Content_Length,
+    Content_Type,
+    Host,
+    Connection
+};
 
 
 class ParsingRequest
@@ -19,6 +21,7 @@ class ParsingRequest
         char            *method;
         char            *URI;
         std::map<int, std::string>  errors;
+        std::map<int, std::string>  fields;
     public:
         ParsingRequest(char *request);
         ~ParsingRequest();

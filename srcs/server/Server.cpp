@@ -24,8 +24,8 @@ void	Server::initialize_current_sockets(void)
 
 void	Server::readSocket(int fd)
 {
-	char *buf;
-	buf = (char *)malloc(sizeof(char) * 1025);
+	uint8_t *buf;
+	buf = (uint8_t *)malloc(sizeof(uint8_t) * 1025);
 	int ret;
 	while (true)
 	{

@@ -7,7 +7,7 @@ ParsingRequest::ParsingRequest(char *request)
 
     end_header_fields(&request);
     request_ln = strtok(request, "\n");
-    header_fiel = strtok(NULL, "\n");
+    header_fiel = strtok(NULL, "$");
     request_line(request_ln);
     header_fields(header_fiel);
 }
@@ -50,8 +50,26 @@ void    ParsingRequest::request_line(char *request_line)
 
 void    ParsingRequest::header_fields(char *header_fields)
 {
-    
+    char *token;
+    char *compare[] = {"Content-Length", "Content-Type", "Host", "Connection"};
 
+    if (header_fields == NULL)
+    {
+        std::cout << "RESPONSE 400" << std::endl;
+    }
+    while (strcmp(header_fields, "\n") != 0)
+    {
+        token = strtok(header_fields, ":");
+        for(int i = 0; i < 4; i++)
+        {
+            if (token == compare[i])
+            {
+                token = strtok(NULL, ":");
+                this->fields[i] = token;
+            }
+        }
+        header_fields = strtok(NULL, "\n");
+    }
     return;
 }
 
