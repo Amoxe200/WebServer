@@ -45,6 +45,8 @@ public:
 	std::map<std::string, std::vector<std::string> > elements;
 	std::string ret_key(std::string line);
 	std::map<std::string, std::string> splitter(std::string line, char del);
+	void vec_print(std::vector<std::string> vector);
+	std::vector<std::string> custom_split(std::string line, char delim);
 	// void fill_root(std::string line);
 	void map_printer();
 	std::string space_remover(std::string word);
