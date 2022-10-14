@@ -17,16 +17,16 @@ Root::~Root()
 
 std::string Root::ret_key(std::string line)
 {
-	// int left_bracket = 0;
-	// int right_bracket = 0;
-	std::vector<std::string> lines;
-	int index = 0;
-	while((line[index] == ' ' || line[index] == '\t' || line[index] == '\n') && line[index])
-		index++;
-	lines = custom_split(line, ' ');
-	vec_print(lines);
-	// splitter(line, ':');
-	// // else
+	std::vector<std::string> lines = custom_split(line, ' ');
+	for (unsigned long i = 0; i < lines.size(); i++)
+	{
+		std::cout<<" Element [" << i << "] = " <<lines[i];
+	}
+	std::cout<<std::endl;
+	
+	// if (line.compare("server:") != 0)
+	// 	splitter(line, ':');
+	// else
 	// {
 	// 	map_printer();
 	// 	exit(1);
@@ -119,39 +119,33 @@ void Root::map_printer()
 	}
 }
 
-void Root::vec_print(std::vector<std::string> vector)
-{
-	std::vector<std::string>::iterator i;
-	for (i = vector.begin(); i < vector.end(); i++)
-			std::cout<<"element = " << *i << std::endl;
-}
-
-std::vector<std::string> Root::custom_split(std::string line, char delim)
+std::vector<std::string> Root::custom_split(std::string line, char del)
 {
 	int lenght = 0;
-	int i = 0;
-	int startIndex = 0;
-	int endIndex = 0;
-	std::string new_line = "";
-	std::vector<std::string> splited;
+	int index = 0;
+	int start = 0;
+	int last = 0;
+	std::string str = "";
+	std::vector <std::string> lines;
 
 	while (line[lenght])
 		lenght++;
-
-	while (i < lenght)
+	while (index < lenght)
 	{
-		if (line[i] == delim)
-		{
-			endIndex = i;
-			new_line = line.substr(startIndex, endIndex);
-			splited.push_back(new_line);
-			startIndex = endIndex + 1;
-		}
-		i++;
+		while (line[index] != del && line[index])
+			index++;
+		last = index;
+		str = line.substr(start, last);
+		while (line[index] == del && line[index])
+			index++;
+		start = index;
+		lines.push_back(str);
+		index++;
 	}
 
-	return(splited);
+	return (lines);
 }
+
 
 // std::map<std::string, std::string> Root::splitter(std::string line, char del)
 // {
@@ -170,14 +164,12 @@ std::vector<std::string> Root::custom_split(std::string line, char delim)
 // 		lent++;
 // 	while (line[i] != del && i < lent)
 // 		i++;
-	
 // 	len_key = i;
 // 	if(line[i] == del)
 // 		i++;
 // 	start_val = i;
 // 	while (line[i])
 // 		i++;
-	
 // 	len_val = i;
 // 	key = line.substr(startIndex, len_key);
 // 	key = space_remover(key);
