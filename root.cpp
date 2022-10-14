@@ -12,13 +12,32 @@ Root::~Root()
 
 std::string Root::ret_key(std::string line)
 {
-	if (line.compare("server:") != 0)
-		splitter(line, ':');
-	else
+	// std::vector<std::string> lines = custom_split(line, ' ');
+	// for (unsigned long i = 0; i < lines.size(); i++)
+	// {
+	// 	std::cout<<" Element [" << i << "] = " <<lines[i];
+	// }
+	// std::cout<<std::endl;
+	if (line.compare("server") == 0)
 	{
-		map_printer();
-		exit(1);
+		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// if (line.compare("server:") != 0)
+	// 	splitter(line, ':');
+	// else
+	// {
+	// 	map_printer();
+	// 	exit(1);
+	// }
     
 	return (line);
 }
@@ -109,38 +128,66 @@ void Root::map_printer()
 
 }
 
-std::map<std::string, std::string> Root::splitter(std::string line, char del)
+std::vector<std::string> Root::custom_split(std::string line, char del)
 {
-	std::string key;
-	std::string str_val;
-	std::vector<std::string> value;
-    std::map<std::string, std::string> lines;
-	int startIndex = 0;
-    int i = 0;
-	int lent = 0;
-	int start_val = 0;
- 	int len_key = 0;
-	int len_val = 0;
+	int lenght = 0;
+	int index = 0;
+	int start = 0;
+	int last = 0;
+	std::string str = "";
+	std::vector <std::string> lines;
 
-	while (line[lent])
-		lent++;
-	while (line[i] != del && i < lent)
-		i++;
-	len_key = i;
-	if(line[i] == del)
-		i++;
-	start_val = i;
-	while (line[i])
-		i++;
-	len_val = i;
-	key = line.substr(startIndex, len_key);
-	key = space_remover(key);
-	str_val = line.substr(start_val, len_val);
-	lines.insert(std::pair<std::string, std::string> (key, str_val));
-	value.push_back(str_val);
-	elements.insert (std::pair< std::string, std::vector<std::string> > (key, value));
-	return(lines);
+	while (line[lenght])
+		lenght++;
+	while (index < lenght)
+	{
+		while (line[index] != del && line[index])
+			index++;
+		last = index;
+		str = line.substr(start, last);
+		while (line[index] == del && line[index])
+			index++;
+		start = index;
+		lines.push_back(str);
+		index++;
+	}
+
+	return (lines);
 }
+
+
+// std::map<std::string, std::string> Root::splitter(std::string line, char del)
+// {
+// 	std::string key;
+// 	std::string str_val;
+// 	std::vector<std::string> value;
+//     std::map<std::string, std::string> lines;
+// 	int startIndex = 0;
+//     int i = 0;
+// 	int lent = 0;
+// 	int start_val = 0;
+//  	int len_key = 0;
+// 	int len_val = 0;
+
+// 	while (line[lent])
+// 		lent++;
+// 	while (line[i] != del && i < lent)
+// 		i++;
+// 	len_key = i;
+// 	if(line[i] == del)
+// 		i++;
+// 	start_val = i;
+// 	while (line[i])
+// 		i++;
+// 	len_val = i;
+// 	key = line.substr(startIndex, len_key);
+// 	key = space_remover(key);
+// 	str_val = line.substr(start_val, len_val);
+// 	lines.insert(std::pair<std::string, std::string> (key, str_val));
+// 	value.push_back(str_val);
+// 	elements.insert (std::pair< std::string, std::vector<std::string> > (key, value));
+// 	return(lines);
+// }
 
 // void Root::fill_root(std::string line)
 // {
