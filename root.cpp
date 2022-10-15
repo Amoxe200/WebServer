@@ -18,11 +18,11 @@ Root::~Root()
 std::string Root::ret_key(std::string line)
 {
 	std::vector<std::string> lines = custom_split(line, ' ');
-	for (unsigned long i = 0; i < lines.size(); i++)
-	{
-		std::cout<<" Element [" << i << "] = " <<lines[i];
-	}
-	std::cout<<std::endl;
+	// for (unsigned long i = 0; i < lines.size(); i++)
+	// {
+	// 	std::cout<<" Element [" << i << "] = " <<lines[i];
+	// }
+	// std::cout<<std::endl;
 	
 	// if (line.compare("server:") != 0)
 	// 	splitter(line, ':');
@@ -135,17 +135,16 @@ std::vector<std::string> Root::custom_split(std::string line, char del)
 		while (line[index] != del && line[index])
 			index++;
 		last = index;
-		str = line.substr(start, last);
+		str = line.substr(start, (last - start));
 		while (line[index] == del && line[index])
 			index++;
 		start = index;
+		std::cout<<"str = "<<str<<std::endl;
 		lines.push_back(str);
 		index++;
 	}
-
 	return (lines);
 }
-
 
 // std::map<std::string, std::string> Root::splitter(std::string line, char del)
 // {
