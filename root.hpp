@@ -23,8 +23,12 @@ std::vector<Server> servers;
 std::vector<std::vector<std::string> > vect;
 
 public:
-	Root();
+	Root(std::ifstream &myfile);
 	~Root();
+
+	/*(Parsing Functions)*/
+	void parser();
+	void parse_vector(std::vector<int> server_index_vector, int servers );
 	/******* Getters *********/
 	std::string get_index();
 	std::vector<std::vector<std::string> > get_root_vector();

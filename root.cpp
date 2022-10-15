@@ -4,9 +4,16 @@
 /*******************    METHODS    ************************/
 /**********************************************************/
 
-Root::Root(){
-
-    std::cout<<"Default constructor called"<<std::endl;
+Root::Root(std::ifstream &myfile)
+{
+    std::cout<<"Parameterized constructor called"<<std::endl;
+	std::string line;
+	while (std::getline(myfile, line))
+		vect.push_back(custom_split(line, ' '));
+	/***** Remove Later the printer ****/
+	print_root_vector();
+	/**** Parsing ****/
+	parser();
 }
 
 Root::~Root()
@@ -14,24 +21,66 @@ Root::~Root()
     std::cout<<"Destructor called"<<std::endl;
 }
 
-std::string Root::ret_key(std::string line)
-{
 
-	vect.push_back(custom_split(line, ' '));
-	// if (line.compare("server:") != 0)
-	// 	splitter(line, ':');
-	// else
-	// {
-	// 	map_printer();
-	// 	exit(1);
-	// }
-	return (line);
+/****** Parser Function where all the parsing happening ********/
+
+void Root::parser()
+{
+	std::vector<int> server_index_vector; // server vector index
+	int servers = 0;
+	/*Check How many servers are in the config file and store there indexes*/
+	for (unsigned long i = 0; i < vect.size(); i++)
+	{
+		for (unsigned long j = 0; j < vect[i].size(); j++)
+		{
+			if (vect[i][j] == "server")
+			{
+				server_index_vector.push_back(i);
+				servers++;
+			}
+		}
+	}
+	/*Get the data from the vector*/
+	parse_vector(server_index_vector, servers);
+}
+
+
+void Root::parse_vector(std::vector<int> server_index_vector, int servers)
+{
+	bool left_bracket_sv = false;
+	bool inside_server = false;
+	bool right_bracket_sv = false;
+	bool inside_location = false;
+	bool right_bracket_loc = false;
+	bool left_bracket_loc = false;
+
+	(void)server_index_vector;
+	(void)servers;
+	/*Check If the first element of the vector is server*/
+	
+	if (vect[0][0] == "server")
+	{
+		for (unsigned long i = 0;  i < vect.size(); i++)
+	{
+		for (unsigned long j = 1; j < vect[i].size(); j++)
+		{
+			if (vect[i][j] == "{")
+		}
+	}
+	}
+	else 
+	{
+		std::cout<<"Config file must start with server"<<std::endl;
+		exit(1);
+	}
+
 }
 
 /**********************************************************/
 /*******************    GETTERS    ************************/
 /**********************************************************/
 
+/*Remove the get vector later*/
 std::vector<std::vector<std::string> > Root::get_root_vector()
 {
 	return vect;
