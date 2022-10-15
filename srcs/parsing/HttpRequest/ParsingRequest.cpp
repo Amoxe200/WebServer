@@ -1,19 +1,33 @@
 #include "ParsingRequest.hpp"
 
-ParsingRequest::ParsingRequest(char *request)
+ParsingRequest::ParsingRequest(void)
 {
-    char *request_ln;;
+    return ;
+}
+
+ParsingRequest::~ParsingRequest(void)
+{
+    return ;
+}
+
+void    ParsingRequest::start_parsing(void)
+{
+    char *request_ln;
     char *header_fiel;
 
-    request_ln = strtok(request, "\n");
-    header_fiel = strtok(NULL, "\n");
+    // if((pos = this->request.find("\r\n\")) == std::string::npos)
+	// 	return (false);
+    request.replace(request.end(), request.end(), 1, '$');
+    //std::cout << "REQUEST START PARSING \n" << request << std::endl;;
+    request_ln = strtok(&this->request[0], "\r\n");
+    header_fiel = strtok(NULL, "$");
     request_line(request_ln);
     header_fields(header_fiel);
 }
 
 void    ParsingRequest::end_header_fields(char **request)
 {
-    for(int i = 0; i < strlen(*request) - 1; i++)
+    for(size_t i = 0; i < strlen(*request) - 1; i++)
     {
         if ((*request)[i] == '\n' && (*request)[i + 1] == '\n')
         {
@@ -26,7 +40,7 @@ void    ParsingRequest::request_line(char *request_line)
 {
     int     check = 0;
     char *token;
-    char  *methods[] = {"GET", "POST", "DELETE"};
+    std::string methods[3] = {"GET", "POST", "DELETE"};
    
     token = strtok(request_line, " ");
     for (size_t i = 0; i < 3; i++)
@@ -50,26 +64,38 @@ void    ParsingRequest::request_line(char *request_line)
 void    ParsingRequest::header_fields(char *header_fields)
 {
     char *token;
-    char *compare[] = {"Content-Length", "Content-Type", "Host", "Connection"};
+    int check = 0;
+    std::string compare[4] = {"Content-Length", "Content-Type", "Host", "Connection"};
 
     if (header_fields == NULL)
     {
         std::cout << "RESPONSE 400" << std::endl;
     }
-    while (strcmp(header_fields, "\n") != 0)
+   // std::cout << "HEADER FIELDS \n" << header_fields << std::endl;
+    while (header_fields && strcmp(header_fields, "\r\n") != 0)
     {
-        token = strtok(header_fields, ":");
+        token = strtok(header_fields, "\r\n");
         for(int i = 0; i < 4; i++)
         {
-            if (token == compare[i])
+         //   std::cout << "Inside the for" << std::endl;
+//std::cout << "TOKEN :: |" << token << "|"<< std::endl;
+          //  std::cout << "compare:: |" << compare[i] << "|" << std::endl;
+
+            if (std::string(token).find(compare[i]) != std::string::npos)
             {
-                token = strtok(NULL, ":");
-                this->fields[i] = token;
+                header_fields = strtok(NULL, "\r\n");
+                strtok(token, ":");
+                this->fields[i] = strtok(NULL, "\r\n");
+              //  std::cout << "TOKEN :: " << this->fields[i] << std::endl;
+               // std::cout << "I ::" << i << std::endl; 
+                check  = 1;
             }
         }
-        header_fields = strtok(NULL, "\n");
+        if (check == 0)
+            header_fields = strtok(NULL, "\n");
+        check = 0;
     }
-    return;
+    return ;
 }
 
 void    ParsingRequest::set_errors(void)
@@ -88,5 +114,38 @@ void    ParsingRequest::set_errors(void)
     this->errors.insert(std::pair<int, std::string>(500, "Internal Server Error"));
     this->errors.insert(std::pair<int, std::string>(501, "Not Implemented"));
 
-    return;
+    return ;
+}
+
+//getters
+
+std::string ParsingRequest::get_fields(int field)
+{
+    return (this->fields[field]);
+}
+
+std::string ParsingRequest::get_request(void)
+{
+    return (this->request);
+}
+
+void        ParsingRequest::set_request(std::string request)
+{
+    this->request = request;
+    return ;
+}
+
+// insert overloading
+
+ParsingRequest& ParsingRequest::operator=(ParsingRequest const &obj)
+{
+    if (this != &obj)
+    {
+        this->method = obj.method;
+        this->URI = obj.URI;
+        this->errors.insert(obj.errors.begin(), obj.errors.end());
+        this->fields.insert(obj.fields.begin(), obj.errors.end());
+        this->request = obj.request;
+    }
+    return (*this);
 }

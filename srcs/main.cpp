@@ -2,6 +2,6 @@
 
 int main()
 {
-	Server test(AF_INET, SOCK_STREAM, 0, 8080, INADDR_ANY, 10);
+	Server test(AF_INET, SOCK_STREAM, 0, 18000, INADDR_ANY, 10);
 	return (0);
 }

@@ -22,42 +22,41 @@ void	Server::initialize_current_sockets(void)
 	FD_SET(this->server_socket, &this->current_sockets);
 }
 
-bool	Server::check_header(void)
+bool	Server::check_header(std::string &request)
 {
-	for(size_t i = 0; i < this->request.size() - 1; i++)
-    {
-        if (this->request[i] == '\n' && this->request[i + 1] == '\n')
-        {
-            this->request[i + 1] = '$';
-			return (true);
-		}
-    }
-	return (false);
+	size_t pos;
+
+//	std::cout << request << std::endl;
+	if((pos = request.find("\r\n\r\n")) == std::string::npos)
+		return (false);
+    request.replace(pos + 2, pos + 3, 1, '$');
+//	std::cout << request << std::endl;
+	return (true);
 }
 
 void	Server::readSocket(int fd)
 {
-
-	std::string		buf;
-	char			*sendRequest;
+	char			buf[1025];
 	char			*body = NULL;
-	// read the socket
-	recv(fd, &buf, 1024, 0);
-	if (this->request.empty())
-		this->request = buf;
-	else
-		this->request += buf;
-	bzero(&buf, 1024);
-	if (check_header())
+	ParsingRequest	objRequest = this->map_Clients[fd];
+	std::string		request = objRequest.get_request();
+	bzero(&buf, 1025);
+	while(recv(fd, &buf, 1024, 0) > 0)
 	{
-		sendRequest = strtok(&this->request[0], "$");
+		std::cout << buf << std::endl;
+		request += buf;
+		objRequest.set_request(request);
+	}
+	if (check_header(request))
+	{
+		objRequest.set_request(strtok(&request[0], "$"));
 		body = strtok(NULL, "$");
-		ParsingRequest *parsingRequest = new ParsingRequest(sendRequest);
+		objRequest.start_parsing();
+		if (body != NULL)
+			std::cout << body << std::endl;
 	}
-	if (body != NULL)
-	{
-		std::cout << "BODY : " << strlen(body) << std::endl;
-	}
+//	std::cout << request << std::endl;
+	bzero(&buf, 1025);
 }
 
 void	Server::selecter(void)
@@ -84,9 +83,10 @@ void	Server::accepter(void)
 	
 	if (FD_ISSET(this->server_socket, &this->read_sockets))
 	{
-		std::cout << "i was here" << std::endl;
+		ParsingRequest		objClient;
 		this->vClient_socket.push_back(accept(this->server_socket,
 		(struct sockaddr *)&address, (socklen_t *)&addrlen));
+		map_Clients.insert(std::pair<int, ParsingRequest>(this->vClient_socket.back(), objClient));
 		FD_SET(this->vClient_socket.back(), &this->current_sockets);
 	}
 }
@@ -112,6 +112,7 @@ void	Server::launch(void)
 			if (FD_ISSET(vClient_socket[i], &this->read_sockets))
 			{
 				readSocket(vClient_socket[i]);
+
 			}
 			if (FD_ISSET(vClient_socket[i], &this->write_sockets))
 			{
