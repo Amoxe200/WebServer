@@ -17,13 +17,8 @@ Root::~Root()
 
 std::string Root::ret_key(std::string line)
 {
-	std::vector<std::string> lines = custom_split(line, ' ');
-	// for (unsigned long i = 0; i < lines.size(); i++)
-	// {
-	// 	std::cout<<" Element [" << i << "] = " <<lines[i];
-	// }
-	// std::cout<<std::endl;
-	
+
+	vect.push_back(custom_split(line, ' '));
 	// if (line.compare("server:") != 0)
 	// 	splitter(line, ':');
 	// else
@@ -37,6 +32,11 @@ std::string Root::ret_key(std::string line)
 /**********************************************************/
 /*******************    GETTERS    ************************/
 /**********************************************************/
+
+std::vector<std::vector<std::string> > Root::get_root_vector()
+{
+	return vect;
+}
 
 std::string Root::get_index()
 {
@@ -76,10 +76,6 @@ std::vector<std::string> Root::get_cgiExt()
 /**********************************************************/
 /*******************    SETTERS    ************************/
 /**********************************************************/
-
-
-
-
 
 
 std::string	Root::space_remover(std::string word)
@@ -139,11 +135,26 @@ std::vector<std::string> Root::custom_split(std::string line, char del)
 		while (line[index] == del && line[index])
 			index++;
 		start = index;
-		std::cout<<"str = "<<str<<std::endl;
+		str = space_remover(str);
 		lines.push_back(str);
 		index++;
 	}
 	return (lines);
+}
+
+
+void Root::print_root_vector()
+{
+	for (unsigned long i = 0; i < vect.size(); i++)
+	{
+		std::cout<<"Vector Number [" << i << "]" << std::endl;
+		for (unsigned long j = 0; j < vect[i].size(); j++)
+		{
+            std::cout<<"Vector element " << j << " : ";
+			std::cout<< vect[i][j] << " ";
+		}
+		std::cout<<std::endl;
+	}
 }
 
 // std::map<std::string, std::string> Root::splitter(std::string line, char del)

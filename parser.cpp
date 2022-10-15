@@ -3,11 +3,12 @@
 void    parse_config()
 {
     std::string configFile;
-    Root default_server;
+    Root root;
 
     std::ifstream Myfile("server.conf");
     while (std::getline(Myfile, configFile))
-        default_server.ret_key(configFile);
+        root.ret_key(configFile);
+    root.print_root_vector();
     Myfile.close();
 }
 

@@ -18,15 +18,16 @@ int bodySize;
 std::vector<std::string> method;
 std::string autoIndex;
 std::string cgiPath;
-std::vector<std::string> config_vector;
 std::vector<std::string> cgiExt;
 std::vector<Server> servers;
+std::vector<std::vector<std::string> > vect;
 
 public:
 	Root();
 	~Root();
 	/******* Getters *********/
 	std::string get_index();
+	std::vector<std::vector<std::string> > get_root_vector();
 	std::vector<std::pair<std::string, std::string> > get_errorPage();
 	int get_bodySize();
 	std::vector<std::string> get_method();
@@ -51,6 +52,7 @@ public:
 	// void fill_root(std::string line);
 	void map_printer();
 	std::string space_remover(std::string word);
+	void print_root_vector();
 };
 
 #endif
