@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <cstring>
+#include <stack>
 #include "server.hpp"
 
 class Root { 
@@ -38,7 +39,7 @@ public:
 	std::string get_autoIndex();
 	std::string get_cgiPath();
 	std::vector<std::string> get_cgiExt();
-
+	bool verify(std::vector <std::vector<std::string> > vect);
 	/******* SETTERS ********/
 	void set_index();
 	void set_errorPage();

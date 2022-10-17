@@ -9,9 +9,13 @@ Root::Root(std::ifstream &myfile)
     std::cout<<"Parameterized constructor called"<<std::endl;
 	std::string line;
 	while (std::getline(myfile, line))
+	{
+		if (line.empty())
+			continue;
 		vect.push_back(custom_split(line, ' '));
+	}
 	/***** Remove Later the printer ****/
-	print_root_vector();
+	// print_root_vector();
 	/**** Parsing ****/
 	parser();
 }
@@ -40,41 +44,139 @@ void Root::parser()
 			}
 		}
 	}
+
 	/*Get the data from the vector*/
-	parse_vector(server_index_vector, servers);
+	verify(vect);
+
 }
 
-
-void Root::parse_vector(std::vector<int> server_index_vector, int servers)
+bool Root::verify(std::vector <std::vector<std::string> > vect)
 {
-	bool left_bracket_sv = false;
-	bool inside_server = false;
-	bool right_bracket_sv = false;
-	bool inside_location = false;
-	bool right_bracket_loc = false;
-	bool left_bracket_loc = false;
+  std::stack<char> stack = std::stack<char>();
+  bool in_server = false;
+  bool in_location = false;
+  bool server_bracket = false;
+  for (size_t i = 0; i < vect.size(); i++)
+    for (size_t j = 0; j < vect[i].size(); j++)
+      {
+        if (vect[i][j] == "server")
+        {
+			
+          if (in_server)
+          {
+            std::cout << "server error "<< std::endl;
+            exit(0);
+          }
+          else
+            in_server = true;
+        }
 
-	(void)server_index_vector;
-	(void)servers;
-	/*Check If the first element of the vector is server*/
-	
-	if (vect[0][0] == "server")
-	{
-		for (unsigned long i = 0;  i < vect.size(); i++)
-	{
-		for (unsigned long j = 1; j < vect[i].size(); j++)
-		{
-			if (vect[i][j] == "{")
-		}
-	}
-	}
-	else 
-	{
-		std::cout<<"Config file must start with server"<<std::endl;
-		exit(1);
-	}
+        if (vect[i][j] == "location")
+        {
+          if (!in_server || in_location)
+          {
+            std::cout << "location error" << std::endl;
+            exit(0);
+          }
+          else
+            in_location= true;
+        }
 
+        if (vect[i][j] == "{")
+        {
+          if (in_server)
+          {
+			if (!server_bracket)
+				server_bracket = true;
+			else if (!in_location)
+			{
+				std::cout<<"error bracket location"<<std::endl;
+				exit(1);
+			}
+          }
+		  else
+		  {
+			std::cout << "block name error" << std::endl;
+            exit(0);
+		  }
+          stack.push('{');
+        }
+        else if (vect[i][j] == "}")
+        {
+          if (stack.empty())
+          {
+            std::cout << "error" << std::endl;
+            exit(0);
+          }
+          else
+          {
+            if (in_location)
+              in_location = false;
+            else if (in_server)
+			{
+              in_server = false;
+				server_bracket = false;
+			}
+            stack.pop();
+          }
+        }
+      }
+  if (!stack.empty())
+  {
+    std::cout << "error" << std::endl;
+    exit(0);
+  }
+
+  return true;
 }
+
+
+
+
+// void Root::parse_vector(std::vector<int> server_index_vector, int servers)
+// {
+// 	std::stack<char> stack = std::stack<char>();
+// 	(void)server_index_vector;
+// 	(void)servers;
+// 	/*Check If the first element of the vector is server*/
+// 	if (vect[0][0] == "server")
+// 	{
+// 		for (unsigned long i = 0; i < vect.size(); i++)
+// 		{
+// 			for (unsigned long j = 0; j < vect[i].size(); j++)
+// 			{
+// 				if (vect[i][j] == "{")
+// 				{
+// 					stack.push('{');
+// 				}
+// 				else if (vect[i][j] == "}")
+// 				{
+// 					if (stack.empty())
+// 					{
+// 						std::cout<<"Bracket Error"<<std::endl;
+// 						exit(1);
+// 					}
+// 					else
+// 					{
+// 						stack.pop();
+// 					}
+// 				}
+
+// 			}
+// 		}
+// 		if (!stack.empty())
+// 		{
+// 			std::cout<<"Error Brackets"<<std::endl;
+// 			exit(1);
+// 		}
+// 	}
+// 	else 
+// 	{
+// 		std::cout<<"Config file must start with server"<<std::endl;
+// 		exit(1);
+// 	}
+
+// }
 
 /**********************************************************/
 /*******************    GETTERS    ************************/
@@ -136,7 +238,7 @@ std::string	Root::space_remover(std::string word)
 	while (word[lenght])
 		lenght++;
 
-	while ((word[i] == ' ' || word[i] == '\t') && i < lenght)
+	while ((word[i] == ' '  || word[i] == '\t') && i < lenght)
 		i++;
 	while ((word[i] != ' ' || word[i] != '\t') && i < lenght)
 	{
