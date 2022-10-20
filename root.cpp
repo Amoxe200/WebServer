@@ -22,16 +22,15 @@ Root::Root(std::ifstream &myfile)
 
 Root::~Root()
 {
-    std::cout<<"Destructor called"<<std::endl;
+	std::cout<<"Destructor called"<<std::endl;
 }
-
 
 /****** Parser Function where all the parsing happening ********/
 
 void Root::parser()
 {
 	std::vector<int> server_index_vector; // server vector index
-	int servers = 0;
+	int server_num = 0;
 	/*Check How many servers are in the config file and store there indexes*/
 	for (unsigned long i = 0; i < vect.size(); i++)
 	{
@@ -40,25 +39,38 @@ void Root::parser()
 			if (vect[i][j] == "server")
 			{
 				server_index_vector.push_back(i);
-				servers++;
+				server_num++;
 			}
 		}
 	}
 
-	/*Get the data from the vector*/
-	verify(vect);
-
+	/*Handle Errors*/
+	verify(vect, server_num);
+	/*Fill the server block*/
+	for (size_t i = 0; i < servers.size(); i++)
+	{
+		std::cout<<"Server["<<i<<"]"<<"Host = "<<servers[i].get_host()<<std::endl;
+		std::cout<<"Server["<<i<<"]"<<"Port = "<<servers[i].get_port()<<std::endl;
+		std::cout<<"Server["<<i<<"]"<<"server Name = "<<servers[i].get_serverName()<<std::endl;
+		std::cout<<"Server["<<i<<"]"<<"Body Size = "<<servers[i].get_body_size()<<std::endl;
+	}
 }
 
-bool Root::verify(std::vector <std::vector<std::string> > vect)
+std::vector<Server> Root::verify(std::vector <std::vector<std::string> > vect, int server_num)
 {
   std::stack<char> stack = std::stack<char>();
+  int index;
   bool in_server = false;
   bool in_location = false;
   bool server_bracket = false;
+  std::vector<Server> server_vect;
+	Server server_obj[server_num];
+
+
   for (size_t i = 0; i < vect.size(); i++)
     for (size_t j = 0; j < vect[i].size(); j++)
       {
+		index = 0;
         if (vect[i][j] == "server")
         {
 			
@@ -101,7 +113,16 @@ bool Root::verify(std::vector <std::vector<std::string> > vect)
 		  }
           stack.push('{');
         }
-        else if (vect[i][j] == "}")
+		/*Fill The data*/
+			if (!j && vect[i][j] == "host:" && (in_server && !in_location))
+				server_obj[index].set_host(vect, i, j);
+			else if (!j && vect[i][j] == "listen:" && (in_server && !in_location))
+				server_obj[index].set_port(vect, i, j);
+			else if (!j && vect[i][j] == "server_name:" && (in_server && !in_location))
+				server_obj[index].set_serverName(vect, i, j);
+			else if (!j && vect[i][j] == "bodySize:" && (in_server && !in_location))
+				server_obj[index].set_bodySize(vect, i, j);
+        if (vect[i][j] == "}")
         {
           if (stack.empty())
           {
@@ -118,68 +139,29 @@ bool Root::verify(std::vector <std::vector<std::string> > vect)
 				server_bracket = false;
 			}
             stack.pop();
+			if (!in_server && !in_location)
+			{
+				servers.push_back(server_obj[index]);
+				if (index < server_num)
+					index++;
+			}
           }
         }
+
       }
+
   if (!stack.empty())
   {
     std::cout << "error" << std::endl;
     exit(0);
   }
 
-  return true;
+  return server_vect;
 }
-
-
-
-
-// void Root::parse_vector(std::vector<int> server_index_vector, int servers)
-// {
-// 	std::stack<char> stack = std::stack<char>();
-// 	(void)server_index_vector;
-// 	(void)servers;
-// 	/*Check If the first element of the vector is server*/
-// 	if (vect[0][0] == "server")
-// 	{
-// 		for (unsigned long i = 0; i < vect.size(); i++)
-// 		{
-// 			for (unsigned long j = 0; j < vect[i].size(); j++)
-// 			{
-// 				if (vect[i][j] == "{")
-// 				{
-// 					stack.push('{');
-// 				}
-// 				else if (vect[i][j] == "}")
-// 				{
-// 					if (stack.empty())
-// 					{
-// 						std::cout<<"Bracket Error"<<std::endl;
-// 						exit(1);
-// 					}
-// 					else
-// 					{
-// 						stack.pop();
-// 					}
-// 				}
-
-// 			}
-// 		}
-// 		if (!stack.empty())
-// 		{
-// 			std::cout<<"Error Brackets"<<std::endl;
-// 			exit(1);
-// 		}
-// 	}
-// 	else 
-// 	{
-// 		std::cout<<"Config file must start with server"<<std::endl;
-// 		exit(1);
-// 	}
-
-// }
 
 /**********************************************************/
 /*******************    GETTERS    ************************/
+/**********************************************************/
 /**********************************************************/
 
 /*Remove the get vector later*/
@@ -188,45 +170,14 @@ std::vector<std::vector<std::string> > Root::get_root_vector()
 	return vect;
 }
 
-std::string Root::get_index()
-{
-	return index;
-}
-
-std::vector<std::pair<std::string, std::string> > Root::get_errorPage()
-{
-	return errorPage;
-}
-
-int Root::get_bodySize()
-{
-	return bodySize;
-}
-
-std::vector<std::string> Root::get_method()
-{
-	return method;
-}
-
-std::string Root::get_autoIndex()
-{
-	return autoIndex;
-}
-
-std::string Root::get_cgiPath()
-{
-	return cgiPath;
-}
-
-std::vector<std::string> Root::get_cgiExt()
-{
-	return cgiExt;
-}
-
 /**********************************************************/
-/*******************    SETTERS    ************************/
+/*******************    Functions    ************************/
 /**********************************************************/
 
+void Root::fill_server()
+{
+
+}
 
 std::string	Root::space_remover(std::string word)
 {
@@ -249,20 +200,6 @@ std::string	Root::space_remover(std::string word)
 		index++;
 	}
 	return (no_space);
-}
-
-void Root::map_printer()
-{
-	std::map<std::string, std::vector<std::string> >::iterator it = elements.begin();
-
-	while (it != elements.end())
-	{
-		std::cout<<"[Key = "<<it->first<<"]";
-		std::vector<std::string> inside_vec = it->second;
-		for (unsigned i = 0; i < inside_vec.size(); i++)
-			std::cout<<" [Value = "<<inside_vec[i]<<"]"<<std::endl;
-		it++;
-	}
 }
 
 std::vector<std::string> Root::custom_split(std::string line, char del)
@@ -306,54 +243,3 @@ void Root::print_root_vector()
 		std::cout<<std::endl;
 	}
 }
-
-// std::map<std::string, std::string> Root::splitter(std::string line, char del)
-// {
-// 	std::string key;
-// 	std::string str_val;
-// 	std::vector<std::string> value;
-//     std::map<std::string, std::string> lines;
-// 	int startIndex = 0;
-//     int i = 0;
-// 	int lent = 0;
-// 	int start_val = 0;
-//  	int len_key = 0;
-// 	int len_val = 0;
-
-// 	while (line[lent])
-// 		lent++;
-// 	while (line[i] != del && i < lent)
-// 		i++;
-// 	len_key = i;
-// 	if(line[i] == del)
-// 		i++;
-// 	start_val = i;
-// 	while (line[i])
-// 		i++;
-// 	len_val = i;
-// 	key = line.substr(startIndex, len_key);
-// 	key = space_remover(key);
-// 	str_val = line.substr(start_val, len_val);
-// 	lines.insert(std::pair<std::string, std::string> (key, str_val));
-// 	value.push_back(str_val);
-// 	elements.insert (std::pair< std::string, std::vector<std::string> > (key, value));
-// 	return(lines);
-// }
-
-// void Root::fill_root(std::string line)
-// {
-// 	std::vector<std::string> value;
-// 	std::map<std::string, std::string> key_map;
-
-// 	key_map = splitter(line, ':');
-
-// 	std::map<std::string, std::string> :: iterator it  = key_map.begin();
-
-// 	while (it != key_map.end())
-// 	{
-// 		// std::cout<<"[key = " << it->first << " ] "<< " [value = "<<it->second << " ]"<< std::endl;
-
-// 		std::cout<<"Value = "<< it->second << std::endl;
-// 		it++;
-// 	}
-// }

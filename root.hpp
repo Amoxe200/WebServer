@@ -13,49 +13,20 @@
 class Root { 
 
 private:
-std::string index;
-std::vector<std::pair<std::string, std::string> > errorPage;
-int bodySize;
-std::vector<std::string> method;
-std::string autoIndex;
-std::string cgiPath;
-std::vector<std::string> cgiExt;
 std::vector<Server> servers;
 std::vector<std::vector<std::string> > vect;
 
 public:
 	Root(std::ifstream &myfile);
 	~Root();
-
 	/*(Parsing Functions)*/
 	void parser();
-	void parse_vector(std::vector<int> server_index_vector, int servers );
-	/******* Getters *********/
-	std::string get_index();
+	std::vector<Server> verify(std::vector <std::vector<std::string> > vect, int server_num);
+	void fill_server();
 	std::vector<std::vector<std::string> > get_root_vector();
-	std::vector<std::pair<std::string, std::string> > get_errorPage();
-	int get_bodySize();
-	std::vector<std::string> get_method();
-	std::string get_autoIndex();
-	std::string get_cgiPath();
-	std::vector<std::string> get_cgiExt();
-	bool verify(std::vector <std::vector<std::string> > vect);
-	/******* SETTERS ********/
-	void set_index();
-	void set_errorPage();
-	void set_bodySize();
-	void set_method();
-	void set_autoIndex();
-	void set_cgiPath();
-	void set_cgiExt();
-
-	std::map<std::string, std::vector<std::string> > elements;
 	std::string ret_key(std::string line);
 	std::vector<std::string> custom_split(std::string line, char del);
-	std::map<std::string, std::string> splitter(std::string line, char del);
-	void vec_print(std::vector<std::string> vector);
-	// void fill_root(std::string line);
-	void map_printer();
+	void vec_print(std::vector<std::string> vector);	
 	std::string space_remover(std::string word);
 	void print_root_vector();
 };
